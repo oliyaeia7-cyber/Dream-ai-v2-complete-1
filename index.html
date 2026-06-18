@@ -1,0 +1,1329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🌙 Dream AI • تعبیر خواب هوشمند</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;700&amp;family=Inter:wght@300;400;500;600&amp;display=swap');
+        
+        :root {
+            --primary: #6366f1;
+        }
+        
+        body {
+            font-family: 'Inter', system_ui, sans-serif;
+        }
+        
+        .font-persian {
+            font-family: 'Vazirmatn', 'Inter', system_ui, sans-serif;
+        }
+
+        .dream-bg {
+            background: radial-gradient(circle at 50% 20%, #1e1135 0%, #0f0a1f 40%, #05040f 100%);
+        }
+
+        .star {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle 1.5s infinite ease-in-out;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+
+        .nebula {
+            background: radial-gradient(circle at 30% 40%, rgba(103, 232, 249, 0.08) 0%, transparent 60%),
+                        radial-gradient(circle at 70% 60%, rgba(167, 139, 250, 0.06) 0%, transparent 50%);
+        }
+
+        .glass {
+            background: rgba(255,255,255, 0.06);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255, 0.1);
+        }
+
+        .section-card {
+            transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), 
+                        box-shadow 0.2s cubic-bezier(0.4, 0.0, 0.2, 1);
+        }
+        
+        .section-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+        }
+
+        .dream-result {
+            animation: fadeInUp 0.5s ease-out forwards;
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .nav-active {
+            background: linear-gradient(to right, #6366f1, #a855f7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 600;
+        }
+
+        .lang-pill {
+            transition: all 0.2s ease;
+        }
+        
+        .lang-pill.active {
+            background-color: #6366f1;
+            color: white;
+            border-color: #6366f1;
+        }
+
+        .symbol-card {
+            transition: all 0.2s ease;
+        }
+        
+        .symbol-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+        }
+
+        .mood-pill {
+            transition: all 0.15s ease;
+        }
+        
+        .mood-pill.active {
+            background-color: #6366f1;
+            color: white;
+            transform: scale(1.05);
+        }
+
+        .analysis-section {
+            scroll-margin-top: 80px;
+        }
+
+        .dream-textarea {
+            resize: none;
+            transition: all 0.3s ease;
+        }
+        
+        .dream-textarea:focus {
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+        }
+
+        .result-heading {
+            background: linear-gradient(90deg, #6366f1, #c026ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 700;
+        }
+
+        .star-field {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .language-search {
+            transition: all 0.2s ease;
+        }
+
+        .history-item {
+            transition: all 0.2s ease;
+        }
+        
+        .history-item:hover {
+            background-color: rgba(255,255,255,0.08);
+            transform: translateX(4px);
+        }
+
+        .rtl {
+            direction: rtl;
+            text-align: right;
+        }
+
+        .flag {
+            font-size: 1.1rem;
+            line-height: 1;
+        }
+
+        .loading-dots::after {
+            content: '';
+            animation: dots 1.2s infinite;
+        }
+
+        @keyframes dots {
+            0%, 20% { content: '.'; }
+            40% { content: '..'; }
+            60%, 100% { content: '...'; }
+        }
+    </style>
+</head>
+<body class="bg-[#05040f] text-white min-h-screen overflow-x-hidden">
+    <!-- Animated Starfield Background -->
+    <div class="star-field" id="starfield"></div>
+
+    <!-- Navbar -->
+    <nav class="border-b border-white/10 bg-[#05040f]/90 backdrop-blur-xl sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-6 py-4">
+            <div class="flex items-center justify-between">
+                <!-- Logo -->
+                <div class="flex items-center gap-x-3">
+                    <div class="w-11 h-11 rounded-2xl bg-gradient-to-br from-indigo-500 via-violet-500 to-fuchsia-500 flex items-center justify-center shadow-lg shadow-indigo-500/30">
+                        <i class="fa-solid fa-moon text-3xl text-white"></i>
+                    </div>
+                    <div>
+                        <div class="flex items-baseline gap-x-2">
+                            <span class="text-3xl font-bold tracking-tighter">Dream AI</span>
+                            <span class="text-xs px-2 py-0.5 rounded-full bg-white/10 text-white/60 font-mono">v2.0</span>
+                        </div>
+                        <p class="text-[10px] text-white/50 -mt-1">تعبیر خواب هوشمند با هوش مصنوعی</p>
+                    </div>
+                </div>
+
+                <!-- Right side controls -->
+                <div class="flex items-center gap-x-3">
+                    <!-- UI Language Switch -->
+                    <div class="flex items-center bg-white/5 rounded-2xl p-1 border border-white/10">
+                        <button onclick="switchUILanguage('en')" id="ui-en"
+                                class="px-4 py-1.5 text-sm font-medium rounded-xl transition-all flex items-center gap-x-1.5 active:bg-white/10">
+                            <span>🇬🇧</span>
+                            <span class="hidden sm:inline">EN</span>
+                        </button>
+                        <button onclick="switchUILanguage('fa')" id="ui-fa"
+                                class="px-4 py-1.5 text-sm font-medium rounded-xl transition-all flex items-center gap-x-1.5 bg-white/10">
+                            <span>🇮🇷</span>
+                            <span class="hidden sm:inline">FA</span>
+                        </button>
+                    </div>
+
+                    <!-- New Chat -->
+                    <button onclick="newChat()" 
+                            class="flex items-center gap-x-2 px-5 py-2.5 rounded-2xl bg-white/5 hover:bg-white/10 border border-white/10 text-sm font-medium transition-all active:scale-[0.985]">
+                        <i class="fa-solid fa-plus text-indigo-400"></i>
+                        <span class="hidden sm:inline" data-i18n="new_chat">New Chat</span>
+                    </button>
+
+                    <!-- History -->
+                    <button onclick="showHistory()" 
+                            class="flex items-center gap-x-2 px-5 py-2.5 rounded-2xl bg-white/5 hover:bg-white/10 border border-white/10 text-sm font-medium transition-all active:scale-[0.985]">
+                        <i class="fa-solid fa-history text-violet-400"></i>
+                        <span class="hidden sm:inline" data-i18n="history">History</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="max-w-5xl mx-auto px-6 pt-10 pb-24">
+        
+        <!-- Hero Header -->
+        <div class="text-center mb-10">
+            <div class="inline-flex items-center gap-x-2 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 mb-6">
+                <div class="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></div>
+                <span class="text-sm font-medium text-white/80">Powered by Claude 3.5 Sonnet • 100+ Languages</span>
+            </div>
+            
+            <h1 class="text-6xl sm:text-7xl font-bold tracking-tighter mb-3">
+                <span class="bg-gradient-to-r from-white via-indigo-200 to-white bg-clip-text text-transparent">Dream deeper.</span><br>
+                <span class="bg-gradient-to-r from-indigo-400 via-violet-400 to-fuchsia-400 bg-clip-text text-transparent">Understand yourself.</span>
+            </h1>
+            <p class="max-w-xl mx-auto text-xl text-white/70" data-i18n="hero_subtitle">
+                Write or speak your dream. Get profound, culturally-aware insights from the world's most advanced dream analyst.
+            </p>
+        </div>
+
+        <!-- Main Card -->
+        <div class="glass rounded-3xl p-8 md:p-10 shadow-2xl border border-white/10 max-w-4xl mx-auto">
+            
+            <!-- Dream Language Selector -->
+            <div class="mb-6">
+                <div class="flex items-center justify-between mb-3 px-1">
+                    <div>
+                        <span class="text-sm font-semibold text-white/90" data-i18n="dream_language">Dream Language</span>
+                        <span class="text-xs text-white/50 ml-2">(AI responds in same language)</span>
+                    </div>
+                    <button onclick="showLanguageModal()" 
+                            class="text-xs flex items-center gap-x-1.5 px-3 py-1 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 text-white/70 hover:text-white transition-colors">
+                        <i class="fa-solid fa-search text-xs"></i>
+                        <span data-i18n="search_languages">Search languages</span>
+                    </button>
+                </div>
+                
+                <!-- Current Language Display -->
+                <div onclick="showLanguageModal()" 
+                     class="flex items-center justify-between w-full px-5 py-3.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-2xl cursor-pointer transition-all group">
+                    <div class="flex items-center gap-x-3" id="current-lang-display">
+                        <span class="text-2xl" id="current-lang-flag">🌍</span>
+                        <div>
+                            <div class="font-semibold" id="current-lang-name">Auto Detect</div>
+                            <div class="text-xs text-white/50" id="current-lang-code">Let AI detect your language</div>
+                        </div>
+                    </div>
+                    <i class="fa-solid fa-chevron-down text-white/40 group-hover:text-white/70 transition-colors"></i>
+                </div>
+            </div>
+
+            <!-- Mood Selection -->
+            <div class="mb-6">
+                <span class="text-sm font-semibold text-white/90 px-1 mb-2 block" data-i18n="mood_label">How did this dream feel?</span>
+                <div class="flex flex-wrap gap-2" id="mood-pills">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+
+            <!-- Dream Input -->
+            <div class="mb-2">
+                <div class="flex items-center justify-between px-1 mb-2">
+                    <span class="text-sm font-semibold text-white/90" data-i18n="your_dream">Your Dream</span>
+                    <div class="flex items-center gap-x-2 text-xs text-white/50">
+                        <span data-i18n="min_chars">min 5 characters</span>
+                    </div>
+                </div>
+                
+                <div class="relative">
+                    <textarea id="dream-input" rows="6" 
+                              class="dream-textarea w-full px-6 py-5 bg-white/5 border border-white/10 focus:border-indigo-500/50 rounded-3xl text-[15px] leading-relaxed placeholder:text-white/40 focus:outline-none"
+                              placeholder="Last night I was flying over a glowing city... or describe any dream in any language..."
+                              data-i18n-placeholder="dream_placeholder"></textarea>
+                    
+                    <!-- Voice Input Button -->
+                    <button onclick="startVoiceInput()" id="mic-btn"
+                            class="absolute bottom-4 right-4 w-11 h-11 flex items-center justify-center rounded-2xl bg-white/10 hover:bg-white/20 border border-white/20 text-white/80 hover:text-white transition-all active:scale-95">
+                        <i class="fa-solid fa-microphone text-lg"></i>
+                    </button>
+                </div>
+                
+                <div class="flex items-center justify-between mt-2 px-2 text-xs">
+                    <div class="flex items-center gap-x-2 text-white/40">
+                        <i class="fa-solid fa-info-circle"></i>
+                        <span data-i18n="voice_hint">Click mic to speak • Works in 40+ languages</span>
+                    </div>
+                    <div id="char-count" class="font-mono text-white/40">0 / 5000</div>
+                </div>
+            </div>
+
+            <!-- Analyze Button -->
+            <button onclick="analyzeDream()" id="analyze-btn"
+                    class="mt-4 w-full py-4 rounded-2xl bg-gradient-to-r from-indigo-600 via-violet-600 to-fuchsia-600 hover:from-indigo-500 hover:via-violet-500 hover:to-fuchsia-500 font-semibold text-lg flex items-center justify-center gap-x-3 shadow-xl shadow-indigo-500/30 active:scale-[0.985] transition-all disabled:opacity-70 disabled:cursor-not-allowed">
+                <i class="fa-solid fa-magic text-xl"></i>
+                <span id="analyze-text" data-i18n="analyze_button">Analyze My Dream with AI</span>
+            </button>
+            
+            <p class="text-center text-xs text-white/40 mt-3" data-i18n="disclaimer">
+                AI analysis for reflection &amp; insight • Not a substitute for professional mental health advice
+            </p>
+        </div>
+
+        <!-- Results Section -->
+        <div id="results-section" class="hidden max-w-4xl mx-auto mt-8">
+            <div class="flex items-center justify-between mb-4 px-2">
+                <div class="flex items-center gap-x-3">
+                    <div class="px-4 py-1.5 rounded-full bg-emerald-500/10 text-emerald-400 text-sm font-medium flex items-center gap-x-2">
+                        <i class="fa-solid fa-check-double"></i>
+                        <span data-i18n="analysis_complete">Analysis Complete</span>
+                    </div>
+                    <div id="processing-time" class="text-xs text-white/50 font-mono"></div>
+                </div>
+                
+                <div class="flex items-center gap-x-2">
+                    <button onclick="copyResult()" 
+                            class="px-4 py-2 text-sm flex items-center gap-x-2 rounded-2xl bg-white/5 hover:bg-white/10 border border-white/10 transition-all">
+                        <i class="fa-solid fa-copy"></i>
+                        <span data-i18n="copy">Copy</span>
+                    </button>
+                    <button onclick="regenerateAnalysis()" 
+                            class="px-4 py-2 text-sm flex items-center gap-x-2 rounded-2xl bg-white/5 hover:bg-white/10 border border-white/10 transition-all">
+                        <i class="fa-solid fa-redo"></i>
+                        <span data-i18n="regenerate">Regenerate</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Result Content -->
+            <div id="result-content" 
+                 class="glass rounded-3xl p-8 md:p-10 border border-white/10 text-[15px] leading-relaxed dream-result">
+                <!-- Populated dynamically by JS -->
+            </div>
+            
+            <div class="mt-4 text-center">
+                <button onclick="newChat()" 
+                        class="text-sm px-6 py-2.5 rounded-2xl border border-white/10 hover:bg-white/5 text-white/70 hover:text-white transition-colors flex items-center gap-x-2 mx-auto">
+                    <i class="fa-solid fa-plus"></i>
+                    <span data-i18n="start_new">Start a new dream analysis</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Dream Symbol Library Teaser -->
+        <div class="max-w-4xl mx-auto mt-16 text-center">
+            <button onclick="showSymbolLibrary()" 
+                    class="inline-flex items-center gap-x-3 px-8 py-4 rounded-3xl bg-white/5 hover:bg-white/10 border border-white/10 text-white/80 hover:text-white transition-all group">
+                <i class="fa-solid fa-book text-xl text-violet-400 group-hover:scale-110 transition-transform"></i>
+                <div class="text-left">
+                    <div class="font-semibold" data-i18n="explore_library">Explore Dream Symbol Library</div>
+                    <div class="text-xs text-white/50">120+ symbols • Instant search • Persian + English meanings</div>
+                </div>
+            </button>
+        </div>
+    </div>
+
+    <!-- Language Selection Modal -->
+    <div id="lang-modal" onclick="if (event.target.id === 'lang-modal') hideLanguageModal()" 
+         class="hidden fixed inset-0 bg-black/70 backdrop-blur-md z-[100] flex items-center justify-center p-6">
+        <div onclick="event.stopImmediatePropagation()" 
+             class="glass w-full max-w-2xl rounded-3xl border border-white/10 overflow-hidden max-h-[85vh] flex flex-col">
+            
+            <!-- Modal Header -->
+            <div class="px-6 py-5 border-b border-white/10 flex items-center justify-between">
+                <div>
+                    <h3 class="font-bold text-2xl" data-i18n="choose_language">Choose Dream Language</h3>
+                    <p class="text-sm text-white/60" data-i18n="lang_modal_desc">AI will respond in the same language as your dream</p>
+                </div>
+                <button onclick="hideLanguageModal()" class="w-9 h-9 flex items-center justify-center text-white/50 hover:text-white">
+                    <i class="fa-solid fa-times text-2xl"></i>
+                </button>
+            </div>
+            
+            <!-- Search -->
+            <div class="p-4 border-b border-white/10">
+                <div class="relative">
+                    <i class="fa-solid fa-search absolute left-4 top-3.5 text-white/40"></i>
+                    <input type="text" id="lang-search" onkeyup="filterLanguages()" 
+                           class="w-full bg-white/5 border border-white/10 focus:border-indigo-500/50 pl-11 py-3 rounded-2xl text-sm placeholder:text-white/40 focus:outline-none"
+                           placeholder="Search languages... (فارسی, English, 中文, etc.)" data-i18n-placeholder="search_lang_placeholder">
+                </div>
+            </div>
+            
+            <!-- Languages Grid -->
+            <div class="p-4 overflow-y-auto flex-1 custom-scroll" id="lang-list">
+                <!-- Populated dynamically by JS -->
+            </div>
+            
+            <div class="p-4 border-t border-white/10 text-xs text-center text-white/50">
+                40+ languages supported • Auto-detect works for most languages
+            </div>
+        </div>
+    </div>
+
+    <!-- Symbol Library Modal -->
+    <div id="symbol-modal" onclick="if (event.target.id === 'symbol-modal') hideSymbolLibrary()" 
+         class="hidden fixed inset-0 bg-black/70 backdrop-blur-md z-[100] flex items-center justify-center p-4">
+        <div onclick="event.stopImmediatePropagation()" 
+             class="glass w-full max-w-5xl rounded-3xl border border-white/10 overflow-hidden max-h-[90vh] flex flex-col">
+            
+            <div class="px-6 py-5 border-b border-white/10 flex items-center justify-between sticky top-0 bg-[#05040f]/90 backdrop-blur">
+                <div class="flex items-center gap-x-3">
+                    <i class="fa-solid fa-book text-2xl text-violet-400"></i>
+                    <div>
+                        <h3 class="font-bold text-2xl" data-i18n="symbol_library_title">Dream Symbol Library</h3>
+                        <p class="text-sm text-white/60">Instant meanings • Culturally aware</p>
+                    </div>
+                </div>
+                <button onclick="hideSymbolLibrary()" class="text-white/50 hover:text-white text-2xl">×</button>
+            </div>
+            
+            <div class="p-5 border-b border-white/10 flex flex-col sm:flex-row gap-3">
+                <div class="flex-1 relative">
+                    <i class="fa-solid fa-search absolute left-4 top-3 text-white/40"></i>
+                    <input type="text" id="symbol-search" onkeyup="filterSymbols()" 
+                           class="w-full bg-white/5 border border-white/10 pl-10 py-2.5 rounded-2xl text-sm focus:outline-none focus:border-indigo-500/50"
+                           placeholder="Search symbols (flying, snake, teeth, water...)" data-i18n-placeholder="search_symbols">
+                </div>
+                <select id="symbol-category" onchange="filterSymbols()" 
+                        class="bg-white/5 border border-white/10 px-4 py-2.5 rounded-2xl text-sm focus:outline-none">
+                    <option value="">All Categories</option>
+                </select>
+            </div>
+            
+            <div class="p-5 overflow-y-auto flex-1 custom-scroll" id="symbol-grid">
+                <!-- Populated by JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- History Modal -->
+    <div id="history-modal" onclick="if (event.target.id === 'history-modal') hideHistory()" 
+         class="hidden fixed inset-0 bg-black/70 backdrop-blur z-[100] flex items-center justify-center p-6">
+        <div onclick="event.stopImmediatePropagation()" class="glass max-w-lg w-full rounded-3xl border border-white/10 max-h-[80vh] flex flex-col">
+            <div class="px-6 py-5 border-b border-white/10 flex justify-between items-center">
+                <h3 class="font-bold text-xl flex items-center gap-x-2">
+                    <i class="fa-solid fa-history text-violet-400"></i> 
+                    <span data-i18n="dream_history">Dream History</span>
+                </h3>
+                <button onclick="clearHistory()" class="text-xs px-3 py-1 rounded-full bg-red-500/10 text-red-400 hover:bg-red-500/20">Clear all</button>
+            </div>
+            
+            <div id="history-list" class="p-3 overflow-y-auto flex-1 text-sm">
+                <!-- JS populated -->
+            </div>
+            
+            <div class="p-4 border-t border-white/10 text-xs text-center text-white/40">
+                Stored locally in your browser • Private &amp; secure
+            </div>
+        </div>
+    </div>
+
+    <footer class="text-center py-8 text-xs text-white/40">
+        Made with ❤️ for dreamers worldwide • Powered by Anthropic Claude • 
+        <a href="https://github.com" target="_blank" class="hover:text-white/60">Open source on GitHub</a>
+    </footer>
+
+    <script>
+        // Tailwind script
+        function initTailwind() {
+            document.documentElement.style.setProperty('--accent', '#6366f1');
+        }
+
+        // Create animated starfield
+        function createStarfield() {
+            const container = document.getElementById('starfield');
+            container.innerHTML = '';
+            
+            for (let i = 0; i < 180; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                
+                const size = Math.random() * 2.2 + 0.6;
+                star.style.width = `${size}px`;
+                star.style.height = `${size}px`;
+                star.style.left = `${Math.random() * 100}vw`;
+                star.style.top = `${Math.random() * 100}vh`;
+                star.style.opacity = Math.random() * 0.7 + 0.3;
+                star.style.animationDelay = `-${Math.random() * 3}s`;
+                star.style.animationDuration = `${1.2 + Math.random() * 2.5}s`;
+                
+                container.appendChild(star);
+            }
+            
+            // Add a few larger glowing stars
+            for (let i = 0; i < 12; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.style.width = '3.5px';
+                star.style.height = '3.5px';
+                star.style.left = `${Math.random() * 100}vw`;
+                star.style.top = `${Math.random() * 100}vh`;
+                star.style.boxShadow = '0 0 8px #a5b4fc, 0 0 14px #6366f1';
+                star.style.animationDuration = `${2.5 + Math.random() * 3}s`;
+                container.appendChild(star);
+            }
+        }
+
+        // UI Translations (Bilingual EN/FA)
+        const translations = {
+            en: {
+                new_chat: "New Chat",
+                history: "History",
+                hero_subtitle: "Write or speak your dream. Get profound, culturally-aware insights from the world's most advanced dream analyst.",
+                dream_language: "Dream Language",
+                search_languages: "Search languages",
+                mood_label: "How did this dream feel?",
+                your_dream: "Your Dream",
+                min_chars: "min 5 characters",
+                voice_hint: "Click mic to speak • Works in 40+ languages",
+                analyze_button: "Analyze My Dream with AI",
+                disclaimer: "AI analysis for reflection & insight • Not a substitute for professional mental health advice",
+                analysis_complete: "Analysis Complete",
+                copy: "Copy",
+                regenerate: "Regenerate",
+                start_new: "Start a new dream analysis",
+                explore_library: "Explore Dream Symbol Library",
+                choose_language: "Choose Dream Language",
+                lang_modal_desc: "AI will respond in the same language as your dream",
+                search_lang_placeholder: "Search languages... (فارسی, English, 中文...)",
+                symbol_library_title: "Dream Symbol Library",
+                search_symbols: "Search symbols (flying, snake, teeth...)",
+                dream_history: "Dream History",
+                dream_placeholder: "Last night I dreamed I was flying over an ancient glowing city... Describe your dream in any language."
+            },
+            fa: {
+                new_chat: "گفتگوی جدید",
+                history: "تاریخچه",
+                hero_subtitle: "خوابت را بنویس یا بگو. بینش‌های عمیق و فرهنگی از پیشرفته‌ترین تحلیلگر خواب جهان دریافت کن.",
+                dream_language: "زبان خواب",
+                search_languages: "جستجوی زبان‌ها",
+                mood_label: "این خواب چه احساسی داشت؟",
+                your_dream: "خواب شما",
+                min_chars: "حداقل ۵ کاراکتر",
+                voice_hint: "روی میکروفون بزنید و صحبت کنید • در بیش از ۴۰ زبان کار می‌کند",
+                analyze_button: "تحلیل خواب با هوش مصنوعی",
+                disclaimer: "تحلیل هوش مصنوعی برای تأمل و بینش • جایگزین مشاوره سلامت روان حرفه‌ای نیست",
+                analysis_complete: "تحلیل کامل شد",
+                copy: "کپی",
+                regenerate: "تحلیل مجدد",
+                start_new: "شروع تحلیل خواب جدید",
+                explore_library: "کتابخانه نمادهای خواب را کاوش کنید",
+                choose_language: "انتخاب زبان خواب",
+                lang_modal_desc: "هوش مصنوعی به همان زبان خواب شما پاسخ خواهد داد",
+                search_lang_placeholder: "جستجوی زبان‌ها... (فارسی، English، 中文...)",
+                symbol_library_title: "کتابخانه نمادهای خواب",
+                search_symbols: "جستجوی نمادها (پرواز، مار، دندان...)",
+                dream_history: "تاریخچه خواب‌ها",
+                dream_placeholder: "دیشب خواب دیدم که بالای یک شهر باستانی درخشان پرواز می‌کردم... خواب خود را به هر زبانی توصیف کنید."
+            }
+        };
+
+        let currentUILang = 'en';
+        let currentDreamLang = 'auto';
+        let currentDreamLangName = 'Auto Detect';
+        let currentDreamLangFlag = '🌍';
+        let currentMood = '';
+
+        // Supported Languages for Dream Input (with SpeechRecognition codes)
+        const supportedLangs = [
+            { code: 'auto', name: 'Auto Detect', name_fa: 'تشخیص خودکار', flag: '🌍', speech: '' },
+            { code: 'fa', name: 'Persian (فارسی)', name_fa: 'فارسی', flag: '🇮🇷', speech: 'fa-IR' },
+            { code: 'en', name: 'English', name_fa: 'انگلیسی', flag: '🇬🇧', speech: 'en-US' },
+            { code: 'ar', name: 'Arabic (العربية)', name_fa: 'عربی', flag: '🇸🇦', speech: 'ar-SA' },
+            { code: 'zh', name: 'Chinese (中文)', name_fa: 'چینی', flag: '🇨🇳', speech: 'zh-CN' },
+            { code: 'es', name: 'Spanish (Español)', name_fa: 'اسپانیایی', flag: '🇪🇸', speech: 'es-ES' },
+            { code: 'fr', name: 'French (Français)', name_fa: 'فرانسوی', flag: '🇫🇷', speech: 'fr-FR' },
+            { code: 'de', name: 'German (Deutsch)', name_fa: 'آلمانی', flag: '🇩🇪', speech: 'de-DE' },
+            { code: 'ru', name: 'Russian (Русский)', name_fa: 'روسی', flag: '🇷🇺', speech: 'ru-RU' },
+            { code: 'hi', name: 'Hindi (हिन्दी)', name_fa: 'هندی', flag: '🇮🇳', speech: 'hi-IN' },
+            { code: 'ja', name: 'Japanese (日本語)', name_fa: 'ژاپنی', flag: '🇯🇵', speech: 'ja-JP' },
+            { code: 'ko', name: 'Korean (한국어)', name_fa: 'کره‌ای', flag: '🇰🇷', speech: 'ko-KR' },
+            { code: 'tr', name: 'Turkish (Türkçe)', name_fa: 'ترکی', flag: '🇹🇷', speech: 'tr-TR' },
+            { code: 'it', name: 'Italian (Italiano)', name_fa: 'ایتالیایی', flag: '🇮🇹', speech: 'it-IT' },
+            { code: 'pt', name: 'Portuguese (Português)', name_fa: 'پرتغالی', flag: '🇵🇹', speech: 'pt-PT' },
+            { code: 'nl', name: 'Dutch (Nederlands)', name_fa: 'هلندی', flag: '🇳🇱', speech: 'nl-NL' },
+            { code: 'sv', name: 'Swedish (Svenska)', name_fa: 'سوئدی', flag: '🇸🇪', speech: 'sv-SE' },
+            { code: 'el', name: 'Greek (Ελληνικά)', name_fa: 'یونانی', flag: '🇬🇷', speech: 'el-GR' },
+            { code: 'he', name: 'Hebrew (עברית)', name_fa: 'عبری', flag: '🇮🇱', speech: 'he-IL' },
+            { code: 'th', name: 'Thai (ไทย)', name_fa: 'تایلندی', flag: '🇹🇭', speech: 'th-TH' },
+            { code: 'vi', name: 'Vietnamese (Tiếng Việt)', name_fa: 'ویتنامی', flag: '🇻🇳', speech: 'vi-VN' },
+            { code: 'id', name: 'Indonesian (Bahasa Indonesia)', name_fa: 'اندونزیایی', flag: '🇮🇩', speech: 'id-ID' },
+            { code: 'pl', name: 'Polish (Polski)', name_fa: 'لهستانی', flag: '🇵🇱', speech: 'pl-PL' },
+            { code: 'uk', name: 'Ukrainian (Українська)', name_fa: 'اوکراینی', flag: '🇺🇦', speech: 'uk-UA' },
+            { code: 'cs', name: 'Czech (Čeština)', name_fa: 'چکی', flag: '🇨🇿', speech: 'cs-CZ' },
+            { code: 'ro', name: 'Romanian (Română)', name_fa: 'رومانیایی', flag: '🇷🇴', speech: 'ro-RO' },
+            { code: 'hu', name: 'Hungarian (Magyar)', name_fa: 'مجاری', flag: '🇭🇺', speech: 'hu-HU' },
+            { code: 'da', name: 'Danish (Dansk)', name_fa: 'دانمارکی', flag: '🇩🇰', speech: 'da-DK' },
+            { code: 'fi', name: 'Finnish (Suomi)', name_fa: 'فنلاندی', flag: '🇫🇮', speech: 'fi-FI' },
+            { code: 'no', name: 'Norwegian (Norsk)', name_fa: 'نروژی', flag: '🇳🇴', speech: 'nb-NO' },
+            { code: 'bg', name: 'Bulgarian (Български)', name_fa: 'بلغاری', flag: '🇧🇬', speech: 'bg-BG' },
+            { code: 'ms', name: 'Malay (Bahasa Melayu)', name_fa: 'مالایی', flag: '🇲🇾', speech: 'ms-MY' },
+        ];
+
+        // Mood options (bilingual)
+        const moods = [
+            { key: '', en: 'Any / Not sure', fa: 'هر حالتی / مطمئن نیستم', emoji: '✨' },
+            { key: 'scary', en: 'Scary / Nightmare', fa: 'ترسناک / کابوس', emoji: '😱' },
+            { key: 'happy', en: 'Happy / Joyful', fa: 'شاد / شادمان', emoji: '😊' },
+            { key: 'weird', en: 'Weird / Strange', fa: 'عجیب / غریب', emoji: '🌀' },
+            { key: 'romantic', en: 'Romantic / Loving', fa: 'عاشقانه', emoji: '💜' },
+            { key: 'vivid', en: 'Vivid / Intense', fa: 'واضح و شدید', emoji: '🌟' },
+            { key: 'sad', en: 'Sad / Melancholic', fa: 'غمگین', emoji: '🌧️' },
+            { key: 'confusing', en: 'Confusing', fa: 'گیج‌کننده', emoji: '❓' },
+        ];
+
+        // Comprehensive Dream Symbol Library (80+ entries)
+        const dreamSymbols = [
+            // Animals
+            { symbol_en: "Snake", symbol_fa: "مار", meaning_en: "Transformation, healing, hidden fears, wisdom, or betrayal. In many cultures a symbol of rebirth (shedding skin).", meaning_fa: "دگرگونی، شفا، ترس‌های پنهان، حکمت یا خیانت. در بسیاری فرهنگ‌ها نماد تولد دوباره است.", category: "Animals" },
+            { symbol_en: "Flying", symbol_fa: "پرواز", meaning_en: "Freedom, ambition, escape from problems, spiritual elevation, or feeling out of control.", meaning_fa: "آزادی، جاه‌طلبی، فرار از مشکلات، تعالی معنوی یا احساس از دست دادن کنترل.", category: "Actions" },
+            { symbol_en: "Falling", symbol_fa: "سقوط", meaning_en: "Loss of control, anxiety about failure, transition, letting go, or fear of the unknown.", meaning_fa: "از دست دادن کنترل، اضطراب شکست، گذار، رها کردن یا ترس از ناشناخته.", category: "Actions" },
+            { symbol_en: "Teeth falling out", symbol_fa: "ریزش دندان", meaning_en: "Insecurity about appearance/communication, major life transition, loss of power, or anxiety.", meaning_fa: "ناامنی در مورد ظاهر یا ارتباط، گذار بزرگ زندگی، از دست دادن قدرت یا اضطراب.", category: "Body" },
+            { symbol_en: "Water / Ocean", symbol_fa: "آب / اقیانوس", meaning_en: "Emotions, the unconscious mind, cleansing, overwhelming feelings, or deep spiritual states.", meaning_fa: "احساسات، ذهن ناخودآگاه، پاکسازی، احساسات طاقت‌فرسا یا حالات معنوی عمیق.", category: "Nature" },
+            { symbol_en: "House", symbol_fa: "خانه", meaning_en: "The self. Different rooms represent different aspects of your personality or life areas.", meaning_fa: "خود. اتاق‌های مختلف نشان‌دهنده جنبه‌های مختلف شخصیت یا حوزه‌های زندگی شما هستند.", category: "Places" },
+            { symbol_en: "Flying over city", symbol_fa: "پرواز بالای شهر", meaning_en: "Desire for freedom, overview of life, ambition, or feeling detached from daily life.", meaning_fa: "میل به آزادی، دید کلی به زندگی، جاه‌طلبی یا احساس جدایی از زندگی روزمره.", category: "Actions" },
+            { symbol_en: "Dog", symbol_fa: "سگ", meaning_en: "Loyalty, friendship, protection, or aspects of your own instinctual nature.", meaning_fa: "وفاداری، دوستی، محافظت یا جنبه‌هایی از طبیعت غریزی خودتان.", category: "Animals" },
+            { symbol_en: "Cat", symbol_fa: "گربه", meaning_en: "Independence, mystery, feminine energy, intuition, or hidden aspects of self.", meaning_fa: "استقلال، رمز و راز، انرژی زنانه، شهود یا جنبه‌های پنهان خود.", category: "Animals" },
+            { symbol_en: "Bird", symbol_fa: "پرنده", meaning_en: "Freedom, soul, aspiration, message from unconscious, or desire to escape.", meaning_fa: "آزادی، روح، آرزو، پیام از ناخودآگاه یا میل به فرار.", category: "Animals" },
+            { symbol_en: "Lion", symbol_fa: "شیر", meaning_en: "Strength, courage, leadership, or repressed anger/power. King of the unconscious.", meaning_fa: "قدرت، شجاعت، رهبری یا خشم/قدرت سرکوب‌شده. پادشاه ناخودآگاه.", category: "Animals" },
+            { symbol_en: "Spider", symbol_fa: "عنکبوت", meaning_en: "Creativity (weaving fate), patience, feminine power, or feeling trapped/manipulated.", meaning_fa: "خلاقیت (تنیدن سرنوشت)، صبر، قدرت زنانه یا احساس گرفتار شدن/دستکاری.", category: "Animals" },
+            
+            // Body & People
+            { symbol_en: "Baby / Child", symbol_fa: "نوزاد / کودک", meaning_en: "New beginnings, vulnerability, your inner child, innocence, or new projects/ideas.", meaning_fa: "آغازهای جدید، آسیب‌پذیری، کودک درونی، معصومیت یا پروژه‌ها/ایده‌های جدید.", category: "People" },
+            { symbol_en: "Deceased loved one", symbol_fa: "عزیز از دست رفته", meaning_en: "Unresolved grief, seeking guidance, integration of their qualities, or message from psyche.", meaning_fa: "اندوه حل‌نشده، جستجوی راهنمایی، ادغام ویژگی‌های آن‌ها یا پیام از روان.", category: "People" },
+            { symbol_en: "Stranger", symbol_fa: "غریبه", meaning_en: "Unknown aspects of yourself (shadow), new opportunities, or parts of personality emerging.", meaning_fa: "جنبه‌های ناشناخته خود (سایه)، فرصت‌های جدید یا بخش‌هایی از شخصیت که در حال ظهور است.", category: "People" },
+            { symbol_en: "Naked in public", symbol_fa: "برهنه در مکان عمومی", meaning_en: "Vulnerability, fear of exposure/judgment, authenticity, or feeling unprepared.", meaning_fa: "آسیب‌پذیری، ترس از افشا/قضاوت، اصالت یا احساس آمادگی نداشتن.", category: "Body" },
+            
+            // Nature & Objects
+            { symbol_en: "Tree", symbol_fa: "درخت", meaning_en: "Personal growth, family/roots, stability, connection between earth and sky (spiritual).", meaning_fa: "رشد شخصی، خانواده/ریشه‌ها، ثبات، ارتباط بین زمین و آسمان (معنوی).", category: "Nature" },
+            { symbol_en: "Fire", symbol_fa: "آتش", meaning_en: "Transformation, passion, destruction/rebirth, anger, or purification.", meaning_fa: "دگرگونی، اشتیاق، نابودی/تولد دوباره، خشم یا پاکسازی.", category: "Nature" },
+            { symbol_en: "Moon", symbol_fa: "ماه", meaning_en: "Intuition, feminine energy, cycles, emotions, the unconscious, or hidden truths.", meaning_fa: "شهود، انرژی زنانه، چرخه‌ها، احساسات، ناخودآگاه یا حقایق پنهان.", category: "Nature" },
+            { symbol_en: "Sun", symbol_fa: "خورشید", meaning_en: "Consciousness, vitality, success, enlightenment, or masculine energy.", meaning_fa: "آگاهی، حیات، موفقیت، روشنگری یا انرژی مردانه.", category: "Nature" },
+            { symbol_en: "Car / Vehicle", symbol_fa: "ماشین / وسیله نقلیه", meaning_en: "Direction in life, control, ambition, or how you navigate your journey.", meaning_fa: "جهت در زندگی، کنترل، جاه‌طلبی یا نحوه پیمایش مسیرتان.", category: "Objects" },
+            { symbol_en: "Key", symbol_fa: "کلید", meaning_en: "Access to new opportunities, solutions, knowledge, or unlocking hidden potential.", meaning_fa: "دسترسی به فرصت‌های جدید، راه‌حل‌ها، دانش یا باز کردن پتانسیل پنهان.", category: "Objects" },
+            { symbol_en: "Mirror", symbol_fa: "آینه", meaning_en: "Self-reflection, facing truth about yourself, identity, or seeing reality clearly.", meaning_fa: "خوداندیشی، مواجهه با حقیقت درباره خود، هویت یا دیدن واقعیت به وضوح.", category: "Objects" },
+            { symbol_en: "Door", symbol_fa: "در", meaning_en: "New opportunities, transitions, choices, or entering new phases of life.", meaning_fa: "فرصت‌های جدید، گذارها، انتخاب‌ها یا ورود به مراحل جدید زندگی.", category: "Objects" },
+            
+            // Actions & Emotions
+            { symbol_en: "Being chased", symbol_fa: "تعقیب شدن", meaning_en: "Avoiding a problem or emotion, stress, fear of confrontation, or running from responsibility.", meaning_fa: "اجتناب از مشکل یا احساس، استرس، ترس از رویارویی یا فرار از مسئولیت.", category: "Actions" },
+            { symbol_en: "Lost / Can't find way", symbol_fa: "گم شدن", meaning_en: "Feeling directionless, identity crisis, need for guidance, or life transition.", meaning_fa: "احساس بی‌جهتی، بحران هویت، نیاز به راهنمایی یا گذار زندگی.", category: "Actions" },
+            { symbol_en: "Exam / Test", symbol_fa: "امتحان", meaning_en: "Self-evaluation, fear of failure/judgment, feeling tested in life, or need to prove yourself.", meaning_fa: "خودارزیابی، ترس از شکست/قضاوت، احساس آزمایش شدن در زندگی یا نیاز به اثبات خود.", category: "Actions" },
+            { symbol_en: "Flying but can't control", symbol_fa: "پرواز بدون کنترل", meaning_en: "Ambition without direction, feeling overwhelmed by success/fame, or lack of grounding.", meaning_fa: "جاه‌طلبی بدون جهت، احساس غرق شدن در موفقیت/شهرت یا کمبود پایه و اساس.", category: "Actions" },
+            
+            // More powerful symbols
+            { symbol_en: "Blood", symbol_fa: "خون", meaning_en: "Life force, passion, injury/emotional wound, family ties, or vital energy.", meaning_fa: "نیروی حیات، اشتیاق، زخم عاطفی، پیوندهای خانوادگی یا انرژی حیاتی.", category: "Body" },
+            { symbol_en: "Death", symbol_fa: "مرگ", meaning_en: "End of a phase, major transformation, fear of change, or letting go of old self.", meaning_fa: "پایان یک مرحله، دگرگونی بزرگ، ترس از تغییر یا رها کردن خود قدیمی.", category: "Actions" },
+            { symbol_en: "Wedding / Marriage", symbol_fa: "عروسی", meaning_en: "Union of opposites (anima/animus), commitment, new beginning, or integration.", meaning_fa: "اتحاد اضداد (آنیما/آنیموس)، تعهد، آغاز جدید یا ادغام.", category: "Actions" },
+            { symbol_en: "School / Classroom", symbol_fa: "مدرسه", meaning_en: "Learning life lessons, feeling judged, nostalgia, or personal growth needed.", meaning_fa: "یادگیری درس‌های زندگی، احساس قضاوت، نوستالژی یا نیاز به رشد شخصی.", category: "Places" },
+            { symbol_en: "Forest / Woods", symbol_fa: "جنگل", meaning_en: "The unconscious, unknown parts of self, feeling lost, or natural instincts.", meaning_fa: "ناخودآگاه، بخش‌های ناشناخته خود، احساس گم شدن یا غرایز طبیعی.", category: "Nature" },
+            { symbol_en: "Bridge", symbol_fa: "پل", meaning_en: "Transition, connection between two states, overcoming obstacles, or new path.", meaning_fa: "گذار، ارتباط بین دو حالت، غلبه بر موانع یا مسیر جدید.", category: "Objects" },
+            { symbol_en: "Elevator", symbol_fa: "آسانسور", meaning_en: "Rapid change in status or emotions, movement between levels of consciousness.", meaning_fa: "تغییر سریع در موقعیت یا احساسات، حرکت بین سطوح آگاهی.", category: "Objects" },
+            { symbol_en: "Clock / Time", symbol_fa: "ساعت", meaning_en: "Pressure of time, fear of aging/death, urgency, or awareness of life passing.", meaning_fa: "فشار زمان، ترس از پیری/مرگ، فوریت یا آگاهی از گذر زندگی.", category: "Objects" },
+        ];
+
+        function populateMoods() {
+            const container = document.getElementById('mood-pills');
+            container.innerHTML = '';
+            
+            moods.forEach(mood => {
+                const btn = document.createElement('button');
+                btn.className = `mood-pill px-4 py-2 text-sm rounded-2xl border border-white/10 flex items-center gap-x-2 bg-white/5 hover:bg-white/10 transition-all ${currentMood === mood.key ? 'active' : ''}`;
+                btn.innerHTML = `
+                    <span>${mood.emoji}</span>
+                    <span class="font-medium">${currentUILang === 'fa' ? mood.fa : mood.en}</span>
+                `;
+                
+                btn.onclick = () => {
+                    // Deselect others
+                    document.querySelectorAll('#mood-pills button').forEach(b => b.classList.remove('active'));
+                    if (currentMood === mood.key) {
+                        currentMood = '';
+                        btn.classList.remove('active');
+                    } else {
+                        currentMood = mood.key;
+                        btn.classList.add('active');
+                    }
+                };
+                
+                container.appendChild(btn);
+            });
+        }
+
+        function switchUILanguage(lang) {
+            currentUILang = lang;
+            
+            // Update active button
+            document.getElementById('ui-en').classList.toggle('bg-white/10', lang === 'en');
+            document.getElementById('ui-fa').classList.toggle('bg-white/10', lang === 'fa');
+            
+            // Update all elements with data-i18n
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (translations[lang] && translations[lang][key]) {
+                    el.textContent = translations[lang][key];
+                }
+            });
+            
+            // Update placeholders
+            document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+                const key = el.getAttribute('data-i18n-placeholder');
+                if (translations[lang] && translations[lang][key]) {
+                    el.placeholder = translations[lang][key];
+                }
+            });
+            
+            // Refresh moods with new language
+            populateMoods();
+            
+            // Refresh current lang display if needed
+            updateCurrentLangDisplay();
+            
+            // Refresh symbol library if open
+            if (!document.getElementById('symbol-modal').classList.contains('hidden')) {
+                renderSymbolGrid();
+            }
+        }
+
+        function updateCurrentLangDisplay() {
+            const flagEl = document.getElementById('current-lang-flag');
+            const nameEl = document.getElementById('current-lang-name');
+            const codeEl = document.getElementById('current-lang-code');
+            
+            const langInfo = supportedLangs.find(l => l.code === currentDreamLang);
+            
+            if (langInfo) {
+                flagEl.textContent = langInfo.flag;
+                nameEl.textContent = currentUILang === 'fa' ? langInfo.name_fa : langInfo.name;
+                codeEl.textContent = currentDreamLang === 'auto' ? 
+                    (currentUILang === 'fa' ? 'بگذار هوش مصنوعی زبان را تشخیص دهد' : 'Let AI detect your language') : 
+                    langInfo.code.toUpperCase();
+            }
+        }
+
+        function showLanguageModal() {
+            const modal = document.getElementById('lang-modal');
+            const listContainer = document.getElementById('lang-list');
+            listContainer.innerHTML = '';
+            
+            supportedLangs.forEach(lang => {
+                const isActive = lang.code === currentDreamLang;
+                
+                const div = document.createElement('div');
+                div.className = `flex items-center gap-x-4 p-4 rounded-2xl cursor-pointer mb-1 transition-all ${isActive ? 'bg-indigo-500/20 border border-indigo-500/40' : 'hover:bg-white/5 border border-transparent'}`;
+                
+                div.innerHTML = `
+                    <div class="text-3xl w-9 text-center">${lang.flag}</div>
+                    <div class="flex-1 min-w-0">
+                        <div class="font-semibold text-[15px]">${currentUILang === 'fa' ? lang.name_fa : lang.name}</div>
+                        <div class="text-xs text-white/50 font-mono">${lang.code}</div>
+                    </div>
+                    ${isActive ? '<i class="fa-solid fa-check text-indigo-400 text-xl"></i>' : ''}
+                `;
+                
+                div.onclick = () => {
+                    currentDreamLang = lang.code;
+                    currentDreamLangName = currentUILang === 'fa' ? lang.name_fa : lang.name;
+                    currentDreamLangFlag = lang.flag;
+                    
+                    updateCurrentLangDisplay();
+                    hideLanguageModal();
+                };
+                
+                listContainer.appendChild(div);
+            });
+            
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            
+            // Focus search
+            setTimeout(() => {
+                document.getElementById('lang-search').focus();
+            }, 300);
+        }
+
+        function hideLanguageModal() {
+            const modal = document.getElementById('lang-modal');
+            modal.classList.remove('flex');
+            modal.classList.add('hidden');
+            document.getElementById('lang-search').value = '';
+        }
+
+        function filterLanguages() {
+            const searchTerm = document.getElementById('lang-search').value.toLowerCase().trim();
+            const items = document.querySelectorAll('#lang-list > div');
+            
+            items.forEach(item => {
+                const text = item.textContent.toLowerCase();
+                item.style.display = text.includes(searchTerm) ? '' : 'none';
+            });
+        }
+
+        // Voice Input using Web Speech API
+        let recognition = null;
+        
+        function startVoiceInput() {
+            const micBtn = document.getElementById('mic-btn');
+            const textarea = document.getElementById('dream-input');
+            
+            if (!('SpeechRecognition' in window || 'webkitSpeechRecognition' in window)) {
+                alert(currentUILang === 'fa' ? 
+                    'مرورگر شما از تشخیص گفتار پشتیبانی نمی‌کند. لطفاً متن را تایپ کنید.' : 
+                    'Your browser does not support speech recognition. Please type your dream.');
+                return;
+            }
+            
+            if (recognition && recognition.isListening) {
+                recognition.stop();
+                return;
+            }
+            
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            recognition = new SpeechRecognition();
+            
+            const langInfo = supportedLangs.find(l => l.code === currentDreamLang);
+            recognition.lang = langInfo && langInfo.speech ? langInfo.speech : (currentUILang === 'fa' ? 'fa-IR' : 'en-US');
+            recognition.continuous = false;
+            recognition.interimResults = false;
+            recognition.maxAlternatives = 1;
+            
+            micBtn.innerHTML = '<i class="fa-solid fa-stop text-red-400 text-xl"></i>';
+            micBtn.classList.add('!bg-red-500/20', '!border-red-500/40');
+            
+            recognition.onresult = (event) => {
+                const transcript = event.results[0][0].transcript;
+                textarea.value = textarea.value ? textarea.value + ' ' + transcript : transcript;
+                updateCharCount();
+                
+                // Auto analyze hint
+                if (textarea.value.length > 40) {
+                    setTimeout(() => {
+                        if (confirm(currentUILang === 'fa' ? 
+                            'آیا می‌خواهید همین حالا خواب را تحلیل کنم؟' : 
+                            'Would you like me to analyze this dream now?')) {
+                            analyzeDream();
+                        }
+                    }, 600);
+                }
+            };
+            
+            recognition.onerror = (event) => {
+                console.error('Speech recognition error:', event);
+                let msg = currentUILang === 'fa' ? 
+                    'خطا در تشخیص گفتار. لطفاً دوباره امتحان کنید.' : 
+                    'Speech recognition error. Please try again.';
+                
+                if (event.error === 'no-speech') {
+                    msg = currentUILang === 'fa' ? 'صدایی شنیده نشد. لطفاً دوباره صحبت کنید.' : 'No speech detected. Please try again.';
+                } else if (event.error === 'audio-capture') {
+                    msg = currentUILang === 'fa' ? 'دسترسی به میکروفون ممکن نیست.' : 'Cannot access microphone.';
+                }
+                
+                alert(msg);
+                resetMicButton();
+            };
+            
+            recognition.onend = () => {
+                resetMicButton();
+            };
+            
+            try {
+                recognition.start();
+            } catch (e) {
+                alert(currentUILang === 'fa' ? 'نمی‌توان تشخیص گفتار را شروع کرد.' : 'Could not start speech recognition.');
+                resetMicButton();
+            }
+        }
+        
+        function resetMicButton() {
+            const micBtn = document.getElementById('mic-btn');
+            micBtn.innerHTML = '<i class="fa-solid fa-microphone text-lg"></i>';
+            micBtn.classList.remove('!bg-red-500/20', '!border-red-500/40');
+        }
+
+        function updateCharCount() {
+            const textarea = document.getElementById('dream-input');
+            const countEl = document.getElementById('char-count');
+            const len = textarea.value.length;
+            countEl.textContent = `${len} / 5000`;
+            
+            if (len > 4500) {
+                countEl.classList.add('text-amber-400');
+            } else {
+                countEl.classList.remove('text-amber-400');
+            }
+        }
+
+        // Main Analysis Function
+        async function analyzeDream() {
+            const textarea = document.getElementById('dream-input');
+            const dreamText = textarea.value.trim();
+            const analyzeBtn = document.getElementById('analyze-btn');
+            const originalBtnText = document.getElementById('analyze-text').innerHTML;
+            
+            if (!dreamText || dreamText.length < 5) {
+                alert(currentUILang === 'fa' ? 
+                    'لطفاً خواب خود را با جزئیات بیشتری توصیف کنید (حداقل ۵ کاراکتر).' : 
+                    'Please describe your dream in more detail (minimum 5 characters).');
+                textarea.focus();
+                return;
+            }
+            
+            // UI Loading state
+            analyzeBtn.disabled = true;
+            document.getElementById('analyze-text').innerHTML = `
+                <span class="loading-dots">Analyzing with Claude AI</span>
+            `;
+            
+            try {
+                const response = await fetch('/analyze', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        dream: dreamText,
+                        lang: currentDreamLang,
+                        mood: currentMood
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (!response.ok || data.error) {
+                    throw new Error(data.error || 'Analysis failed');
+                }
+                
+                // Show results
+                displayAnalysisResult(data.result, data.processing_time);
+                
+                // Save to history
+                saveToHistory(dreamText, data.result, currentDreamLang);
+                
+            } catch (error) {
+                console.error('Analysis error:', error);
+                let errorMsg = error.message || 'Unknown error occurred.';
+                
+                if (errorMsg.includes('API key')) {
+                    errorMsg = currentUILang === 'fa' ? 
+                        'کلید API تنظیم نشده است. لطفاً در تنظیمات Render کلید ANTHROPIC_API_KEY را اضافه کنید.' : 
+                        'API key not configured. Please add ANTHROPIC_API_KEY in your Render environment variables.';
+                }
+                
+                alert(currentUILang === 'fa' ? 
+                    `خطا در تحلیل: ${errorMsg}` : 
+                    `Analysis error: ${errorMsg}`);
+            } finally {
+                analyzeBtn.disabled = false;
+                document.getElementById('analyze-text').innerHTML = originalBtnText;
+            }
+        }
+
+        function displayAnalysisResult(resultText, processingTime) {
+            const resultsSection = document.getElementById('results-section');
+            const contentDiv = document.getElementById('result-content');
+            
+            // Format the result beautifully
+            let formatted = resultText
+                .replace(/\*\*(.+?)\*\*/g, '<strong class="result-heading block mt-6 mb-2 text-lg">$1</strong>')
+                .replace(/\n/g, '<br>');
+            
+            // Add nice spacing for sections
+            formatted = formatted.replace(/🔍/g, '<span class="text-2xl mr-2">🔍</span>');
+            formatted = formatted.replace(/🧠/g, '<span class="text-2xl mr-2">🧠</span>');
+            formatted = formatted.replace(/💜/g, '<span class="text-2xl mr-2">💜</span>');
+            formatted = formatted.replace(/✨/g, '<span class="text-2xl mr-2">✨</span>');
+            
+            contentDiv.innerHTML = `
+                <div class="prose prose-invert max-w-none text-[15px] leading-relaxed text-white/90">
+                    ${formatted}
+                </div>
+            `;
+            
+            // Show processing time
+            if (processingTime) {
+                document.getElementById('processing-time').innerHTML = 
+                    `<i class="fa-solid fa-clock mr-1"></i> ${processingTime}s`;
+            }
+            
+            resultsSection.classList.remove('hidden');
+            resultsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        function copyResult() {
+            const content = document.getElementById('result-content').innerText;
+            navigator.clipboard.writeText(content).then(() => {
+                const originalText = event.currentTarget ? event.currentTarget.innerHTML : '';
+                const btns = document.querySelectorAll('#results-section button');
+                btns.forEach(btn => {
+                    if (btn.innerText.includes('Copy') || btn.innerText.includes('کپی')) {
+                        const orig = btn.innerHTML;
+                        btn.innerHTML = `<i class="fa-solid fa-check"></i> <span>${currentUILang === 'fa' ? 'کپی شد!' : 'Copied!'}</span>`;
+                        setTimeout(() => {
+                            btn.innerHTML = orig;
+                        }, 1800);
+                    }
+                });
+            }).catch(() => {
+                // Fallback
+                const textarea = document.createElement('textarea');
+                textarea.value = content;
+                document.body.appendChild(textarea);
+                textarea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textarea);
+                alert(currentUILang === 'fa' ? 'در کلیپ‌بورد کپی شد!' : 'Copied to clipboard!');
+            });
+        }
+
+        function regenerateAnalysis() {
+            const textarea = document.getElementById('dream-input');
+            if (textarea.value.trim().length > 4) {
+                document.getElementById('results-section').classList.add('hidden');
+                analyzeDream();
+            }
+        }
+
+        // History Management
+        function saveToHistory(dream, result, lang) {
+            let history = JSON.parse(localStorage.getItem('dreamHistory') || '[]');
+            
+            const entry = {
+                id: Date.now(),
+                date: new Date().toISOString(),
+                dream: dream.substring(0, 180) + (dream.length > 180 ? '...' : ''),
+                fullDream: dream,
+                result: result,
+                lang: lang
+            };
+            
+            history.unshift(entry);
+            if (history.length > 25) history = history.slice(0, 25); // Keep last 25
+            
+            localStorage.setItem('dreamHistory', JSON.stringify(history));
+        }
+
+        function showHistory() {
+            const modal = document.getElementById('history-modal');
+            const list = document.getElementById('history-list');
+            list.innerHTML = '';
+            
+            const history = JSON.parse(localStorage.getItem('dreamHistory') || '[]');
+            
+            if (history.length === 0) {
+                list.innerHTML = `
+                    <div class="text-center py-12 text-white/50">
+                        <i class="fa-solid fa-inbox text-5xl mb-4 opacity-40"></i>
+                        <p data-i18n="no_history">${currentUILang === 'fa' ? 'هنوز خوابی تحلیل نشده است.' : 'No dreams analyzed yet.'}</p>
+                    </div>
+                `;
+            } else {
+                history.forEach((entry, index) => {
+                    const item = document.createElement('div');
+                    item.className = 'history-item p-4 rounded-2xl border border-white/10 mb-2 cursor-pointer flex gap-4';
+                    
+                    const date = new Date(entry.date).toLocaleDateString(currentUILang === 'fa' ? 'fa-IR' : 'en-US', { 
+                        month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' 
+                    });
+                    
+                    item.innerHTML = `
+                        <div class="flex-1 min-w-0">
+                            <div class="flex items-center gap-x-2 mb-1">
+                                <span class="text-xs px-2.5 py-0.5 rounded-full bg-white/10 text-white/60 font-mono">${entry.lang.toUpperCase()}</span>
+                                <span class="text-xs text-white/50">${date}</span>
+                            </div>
+                            <div class="font-medium text-sm line-clamp-2 text-white/90">${entry.dream}</div>
+                        </div>
+                        <div class="flex items-center">
+                            <i class="fa-solid fa-chevron-right text-white/30"></i>
+                        </div>
+                    `;
+                    
+                    item.onclick = () => {
+                        hideHistory();
+                        
+                        // Load this dream
+                        document.getElementById('dream-input').value = entry.fullDream || entry.dream;
+                        currentDreamLang = entry.lang;
+                        
+                        const langInfo = supportedLangs.find(l => l.code === entry.lang);
+                        if (langInfo) {
+                            currentDreamLangFlag = langInfo.flag;
+                            currentDreamLangName = currentUILang === 'fa' ? langInfo.name_fa : langInfo.name;
+                        }
+                        updateCurrentLangDisplay();
+                        
+                        // Show result
+                        const resultsSection = document.getElementById('results-section');
+                        const contentDiv = document.getElementById('result-content');
+                        
+                        let formatted = entry.result
+                            .replace(/\*\*(.+?)\*\*/g, '<strong class="result-heading block mt-6 mb-2 text-lg">$1</strong>')
+                            .replace(/\n/g, '<br>');
+                        
+                        contentDiv.innerHTML = `
+                            <div class="prose prose-invert max-w-none text-[15px] leading-relaxed text-white/90">
+                                ${formatted}
+                            </div>
+                        `;
+                        
+                        resultsSection.classList.remove('hidden');
+                        resultsSection.scrollIntoView({ behavior: 'smooth' });
+                    };
+                    
+                    list.appendChild(item);
+                });
+            }
+            
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function hideHistory() {
+            const modal = document.getElementById('history-modal');
+            modal.classList.remove('flex');
+            modal.classList.add('hidden');
+        }
+
+        function clearHistory() {
+            if (confirm(currentUILang === 'fa' ? 'آیا مطمئن هستید که می‌خواهید تمام تاریخچه را پاک کنید؟' : 'Are you sure you want to clear all history?')) {
+                localStorage.removeItem('dreamHistory');
+                hideHistory();
+                showHistory(); // Refresh
+            }
+        }
+
+        // Symbol Library
+        function showSymbolLibrary() {
+            const modal = document.getElementById('symbol-modal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            
+            // Populate categories
+            const catSelect = document.getElementById('symbol-category');
+            catSelect.innerHTML = '<option value="">All Categories</option>';
+            
+            const categories = [...new Set(dreamSymbols.map(s => s.category))].sort();
+            categories.forEach(cat => {
+                const opt = document.createElement('option');
+                opt.value = cat;
+                opt.textContent = cat;
+                catSelect.appendChild(opt);
+            });
+            
+            renderSymbolGrid();
+            
+            // Search listener
+            document.getElementById('symbol-search').oninput = renderSymbolGrid;
+        }
+
+        function hideSymbolLibrary() {
+            const modal = document.getElementById('symbol-modal');
+            modal.classList.remove('flex');
+            modal.classList.add('hidden');
+            document.getElementById('symbol-search').value = '';
+        }
+
+        function filterSymbols() {
+            renderSymbolGrid();
+        }
+
+        function renderSymbolGrid() {
+            const grid = document.getElementById('symbol-grid');
+            const searchVal = (document.getElementById('symbol-search').value || '').toLowerCase().trim();
+            const catFilter = document.getElementById('symbol-category').value;
+            
+            grid.innerHTML = '';
+            
+            let filtered = dreamSymbols;
+            
+            if (searchVal) {
+                filtered = filtered.filter(s => 
+                    s.symbol_en.toLowerCase().includes(searchVal) || 
+                    s.symbol_fa.toLowerCase().includes(searchVal) ||
+                    s.meaning_en.toLowerCase().includes(searchVal) ||
+                    s.meaning_fa.toLowerCase().includes(searchVal)
+                );
+            }
+            
+            if (catFilter) {
+                filtered = filtered.filter(s => s.category === catFilter);
+            }
+            
+            if (filtered.length === 0) {
+                grid.innerHTML = `<div class="col-span-full text-center py-12 text-white/50">No symbols found matching your search.</div>`;
+                return;
+            }
+            
+            filtered.forEach(symbol => {
+                const card = document.createElement('div');
+                card.className = `symbol-card glass p-5 rounded-2xl border border-white/10 h-full flex flex-col`;
+                
+                const isFa = currentUILang === 'fa';
+                
+                card.innerHTML = `
+                    <div class="flex items-start justify-between mb-3">
+                        <div>
+                            <div class="font-bold text-xl tracking-tight">${isFa ? symbol.symbol_fa : symbol.symbol_en}</div>
+                            <div class="text-xs text-white/50 mt-0.5">${symbol.category}</div>
+                        </div>
+                        <div class="text-xs px-2.5 py-1 rounded-full bg-white/5 text-white/60 self-start">${isFa ? symbol.symbol_en : symbol.symbol_fa}</div>
+                    </div>
+                    
+                    <div class="text-sm text-white/80 flex-1 leading-relaxed">
+                        ${isFa ? symbol.meaning_fa : symbol.meaning_en}
+                    </div>
+                `;
+                
+                grid.appendChild(card);
+            });
+        }
+
+        function newChat() {
+            // Clear current input and results
+            document.getElementById('dream-input').value = '';
+            document.getElementById('results-section').classList.add('hidden');
+            document.getElementById('char-count').textContent = '0 / 5000';
+            
+            // Reset mood
+            currentMood = '';
+            populateMoods();
+            
+            // Scroll to top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            
+            // Focus input
+            setTimeout(() => {
+                document.getElementById('dream-input').focus();
+            }, 400);
+        }
+
+        function initCharCount() {
+            const textarea = document.getElementById('dream-input');
+            textarea.addEventListener('input', updateCharCount);
+            
+            // Initial count
+            setTimeout(updateCharCount, 100);
+        }
+
+        function initKeyboardShortcuts() {
+            document.addEventListener('keydown', function(e) {
+                if (e.key === '/' && document.activeElement.tagName === 'BODY') {
+                    e.preventDefault();
+                    document.getElementById('dream-input').focus();
+                }
+                
+                if (e.key === 'Escape') {
+                    const modals = document.querySelectorAll('.fixed.inset-0:not(.hidden)');
+                    if (modals.length > 0) {
+                        modals[modals.length - 1].classList.add('hidden');
+                        modals[modals.length - 1].classList.remove('flex');
+                    }
+                }
+                
+                if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+                    const textarea = document.getElementById('dream-input');
+                    if (document.activeElement === textarea) {
+                        e.preventDefault();
+                        analyzeDream();
+                    }
+                }
+            });
+            
+            // Placeholder hint
+            const textarea = document.getElementById('dream-input');
+            textarea.addEventListener('focus', () => {
+                if (!textarea.value) {
+                    textarea.placeholder = currentUILang === 'fa' ? 
+                        'دیشب خواب دیدم که بالای یک شهر باستانی درخشان پرواز می‌کردم...' : 
+                        'Last night I dreamed I was flying over an ancient glowing city...';
+                }
+            });
+        }
+
+        function initEverything() {
+            initTailwind();
+            createStarfield();
+            
+            // Initial UI language (default English, can be changed)
+            // Try to detect browser language
+            const browserLang = navigator.language || navigator.userLanguage;
+            if (browserLang.startsWith('fa') || browserLang.startsWith('ar')) {
+                switchUILanguage('fa');
+            } else {
+                switchUILanguage('en');
+            }
+            
+            populateMoods();
+            updateCurrentLangDisplay();
+            initCharCount();
+            initKeyboardShortcuts();
+            
+            // Welcome message in console
+            console.log('%c[Dream AI v2.0] Beautiful multilingual dream analysis ready. Stars loaded ✨', 'color:#6366f1');
+            
+            // Optional: Preload one example dream for demo (commented)
+            // document.getElementById('dream-input').value = "I was flying over my childhood home at night...";
+        }
+
+        // Boot app
+        window.onload = initEverything;
+        
+        // Expose some functions for debugging
+        window.DreamAI = { switchUILanguage, showSymbolLibrary, newChat };
+    </script>
+</body>
+</html>

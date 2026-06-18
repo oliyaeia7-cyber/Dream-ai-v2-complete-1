@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: dream-ai-v2
+    runtime: docker
+    plan: free
+    healthCheckPath: /health
+    envVars:
+      - key: GROQ_API_KEY
+        sync: false
+        description: "FREE key from https://console.groq.com/keys (no credit card needed)"
